@@ -13,7 +13,7 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      logg: 1
+      logg: 0
     }
     this.SetLog = this.SetLog.bind(this);
   }
