@@ -43,8 +43,9 @@ class LoginPage extends React.Component {
 
             var usuario = xmlhttp.responseText; 
             console.log(usuario)
-            return usuario;
+     
             if(usuario=="true"){
+           
                 this.props.SetLog(1);
 
             }
@@ -97,7 +98,7 @@ class LoginPage extends React.Component {
                 <Card className={classes[this.state.cardAnimaton]}>
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Login</h4>
+                      <h3>Login</h3>
                       <div className={classes.socialLine}>
                         <Button
                           justIcon
@@ -128,7 +129,7 @@ class LoginPage extends React.Component {
                         </Button>
                       </div>
                     </CardHeader>
-                    <p className={classes.divider}>Or Be Classical</p>
+                    
                     <CardBody>
                      
                       <CustomInput

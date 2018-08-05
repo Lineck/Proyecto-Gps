@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 // import Footer from './components/Footer/Footer';
 import LoginPage from './views/LoginPage/LoginPage';
 // import Home from './components/Home/Home';
- import Signup from './views/Signup/Signup';
-import Home from './views/Home/Home';
+ import RegistroPage from './views/RegistroPage/RegistroPage';
+import HomePage from './views/HomePage/HomePage';
 
 
  
@@ -36,8 +36,8 @@ class App extends Component {
      
     
       { logg == 0? <LoginPage SetLog={this.SetLog}/> :
-          logg == 1? <Home/> :
-        logg == 2? <Signup/> :""}
+          logg == 1? <HomePage SetLog={this.SetLog}/> :
+        logg == 2? <RegistroPage SetLog={this.SetLog}/> :""}
     
        
       </div>

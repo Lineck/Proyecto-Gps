@@ -130,7 +130,11 @@ class SectionBasics extends React.Component {
             <GridContainer>
               <GridItem xs={12} sm={4} md={4} lg={3}>
                 <CustomInput
-                  id="regular"
+                 
+                  id="nombre"
+                  label="Nombre"
+                  name="nombre"
+                  onChange={(e) => this.handleChange(e)}
                   inputProps={{
                     placeholder: "Regular"
                   }}
