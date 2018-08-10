@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
+import Typography from "@material-ui/core/Typography";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
 // core components
@@ -73,22 +74,23 @@ class Header extends React.Component {
       [classes.absolute]: absolute,
       [classes.fixed]: fixed
     });
-    const brandComponent = (
-      <Button className={classes.title}>
-        {brand}
-      </Button>
-    );
+
     return (
       <AppBar className={appBarClasses}>
         <Toolbar className={classes.container}>
-          {leftLinks !== undefined ? brandComponent : null}
+          {leftLinks !== undefined ?
+            <Button onClick={()=> this.props.SetLog(0)} className={classes.title}>
+              {brand}
+            </Button> : null}
           <div className={classes.flex}>
             {leftLinks !== undefined ? (
               <Hidden smDown implementation="css">
                 {leftLinks}
               </Hidden>
             ) : (
-              brandComponent
+              <Button onClick={()=> this.props.SetLog(0)} className={classes.title}>
+                {brand}
+              </Button>
             )}
           </div>
           <Hidden smDown implementation="css">

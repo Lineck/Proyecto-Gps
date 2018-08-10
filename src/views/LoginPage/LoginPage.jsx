@@ -3,6 +3,8 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 // @material-ui/icons
+import InfoOutline from "@material-ui/icons/InfoOutline";
+import SnackbarContent from "components/Snackbar/SnackbarContent.jsx";
 import Email from "@material-ui/icons/Email";
 import LockOutline from "@material-ui/icons/LockOutline";
 // core components
@@ -25,32 +27,36 @@ class LoginPage extends React.Component {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
+          
           email:'',
           contraseña:'',
-          cardAnimaton: "cardHidden"
+          cardAnimaton: "cardHidden",
+          error:1
       
     };
+    this.props.IniciarSesion();
+    
+    
     this.login=this.login.bind(this);
     this.onChange=this.onChange.bind(this);
   }
-
+  
   login(){
       
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange= ()=> {
 
         if(xmlhttp.readyState === 4 && xmlhttp.status === 200){
-
             var usuario = xmlhttp.responseText; 
             console.log(usuario)
      
-            if(usuario=="true"){
-           
-                this.props.SetLog(1);
-
-            }
-           
-         
+            if(usuario==1){
+            
+              this.props.SetLog(1);
+            
+            }else{
+              this.errorDidMount(usuario);
+            }         
 
         }else{
 
@@ -69,6 +75,17 @@ class LoginPage extends React.Component {
     this.setState({[e.target.name]: e.target.value})
 
   } 
+  errorDidMount(usuario) {
+   this.setState({error:usuario}) 
+   // we add a hidden class to the card and after 700 ms we delete it and the transition appears
+    setTimeout(
+      
+      function() {
+        this.setState({ error: "" });
+      }.bind(this),
+      3000
+    );
+  }
 
   componentDidMount() {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
@@ -81,15 +98,17 @@ class LoginPage extends React.Component {
   }
   render() {
     const { classes} = this.props;
+    
     return (
-      <div>
+      <div >
        
         <div
           className={classes.pageHeader}
           style={{
             backgroundImage: "url(" + image + ")",
-            backgroundSize: "cover",
+            backgroundSize: "auto",
             backgroundPosition: "top center"
+            // backgroundColor:'#999DFF'
           }}
         >
           <div className={classes.container}>
@@ -105,6 +124,7 @@ class LoginPage extends React.Component {
                           href="#pablo"
                           target="_blank"
                           color="transparent"
+                          
                           onClick={e => e.preventDefault()}
                         >
                           <i className={"fab fa-twitter"} />
@@ -153,6 +173,7 @@ class LoginPage extends React.Component {
                       <CustomInput
                         labelText="Contraseña"
                         id="pass"
+                        
                         formControlProps={{
                           fullWidth: true
                         }}
@@ -171,10 +192,10 @@ class LoginPage extends React.Component {
                       />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                      <Button simple color="primary" size="lg" onClick={()=>this.login()}>
+                      <Button style={{fontSize:'15px'}} simple color="primary" size="lg" onClick={()=>this.login()}>
                         Iniciar sesión
                       </Button>
-                      <Button simple color="primary" size="lg" onClick={() => this.props.SetLog(2)}>
+                      <Button style={{fontSize:'15px'}}simple color="primary" size="lg" onClick={() => this.props.SetLog(2)}>
                         Registrarse
                       </Button>
                     </CardFooter>
@@ -182,7 +203,28 @@ class LoginPage extends React.Component {
                 </Card>
               </GridItem>
             </GridContainer>
+            { this.state.error == 3? <SnackbarContent
+                                      message={
+                                          <span>
+                                            <b>INFO ALERT:</b>Contraseña incorrecta
+                                          </span>
+                                      }
+                                      close={true}
+                                      color="danger"
+                                      icon={InfoOutline}
+                                    /> :
+          this.state.error == 3? <SnackbarContent
+                                    message={
+                                        <span>
+                                          <b>INFO ALERT:</b> Usuario incorrecto
+                                        </span>
+                                    }
+                                    close={true}
+                                    color="danger"
+                                    icon={InfoOutline}
+                                  /> :""}
           </div>
+          
           <Footer/>
         </div>
       </div>

@@ -1,24 +1,26 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { createMuiTheme,MuiThemeProvider } from '@material-ui/core/styles';
 import InfoOutline from "@material-ui/icons/InfoOutline";
 import SnackbarContent from "components/Snackbar/SnackbarContent.jsx";
-import purple from '@material-ui/core/colors/purple';
 import CustomInput from "components/CustomInput/CustomInput.jsx";
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import purple from "@material-ui/core/colors/purple"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 import Button from '@material-ui/core/Button';
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
+import { container, title  } from "assets/jss/material-kit-react.jsx";
+
 
 // core 
 import MenuItem from '@material-ui/core/MenuItem';
+import HeaderGps from "components/Header/HeaderGps.jsx"
 import Select from '@material-ui/core/Select';
 import Footer from "components/Footer/Footer.jsx";
 import Card from "components/Card/Card.jsx"
 import CardHeader from "components/Card/CardHeader.jsx"
 import InputLabel from "@material-ui/core/InputLabel"
+import image from "assets/img/bg.jpg";
 
 const styles = {
   root: {
@@ -32,6 +34,22 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
+  container: {
+    zIndex: "12",
+    color: "#FFFFFF",
+    ...container
+    
+  },
+  title: {
+    ...title,
+    display: "inline-block",
+    position: "relative",
+    marginTop: "30px",
+    minHeight: "32px",
+    color: "#FFFFFF",
+    textDecoration: "none"
+  },
+  
 };
 const theme = createMuiTheme({
   palette: {
@@ -63,11 +81,76 @@ class RegistroPage extends React.Component {
         this.validar2=this.validar2.bind(this);
         
     }
+
+     checkRut(rut) {
+        // Despejar Puntos
+        var valor = rut.replace('.','');
+        // Despejar Guión
+        valor = valor.replace('-','');
+        
+        // Aislar Cuerpo y Dígito Verificador
+        var cuerpo = valor.slice(0,-1);
+        var dv = valor.slice(-1).toUpperCase();
+      
+        // Formatear RUN
+        rut = cuerpo + '-'+ dv
+      
+        // Si no cumple con el mínimo ej. (n.nnn.nnn)
+        if(cuerpo.length < 7) { this.setState({rut_error:"RUT Incompleto"}); return false;}
+      
+      // Calcular Dígito Verificador
+      var suma = 0;
+      var multiplo = 2;
+      
+      // Para cada dígito del Cuerpo
+      for(var i=1;i<=cuerpo.length;i++) {
+      
+          // Obtener su Producto con el Múltiplo Correspondiente
+          var index = multiplo * valor.charAt(cuerpo.length - i);
+          
+          // Sumar al Contador General
+          suma = suma + index;
+          
+          // Consolidar Múltiplo dentro del rango [2,7]
+          if(multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
     
+      }
+      
+      // Calcular Dígito Verificador en base al Módulo 11
+      var dvEsperado = 11 - (suma % 11);
+      
+      // Casos Especiales (0 y K)
+      dv = (dv == 'K')?10:dv;
+      dv = (dv == 0)?11:dv;
+      
+      // Validar que el Cuerpo coincide con su Dígito Verificador
+      if(dvEsperado != dv) {this.setState({rut_error:"RUT Invalido"}); return false; }
+      
+      // Si todo sale bien, eliminar errores (decretar que es válido)
+      return true;
+  }
+
+    
+    validarCorreo(){
+
+      var array=this.state.correo;
+     
+      var res = array.split('@');
+      if(res[1]==="alumnos.ubiobio.cl"){
+        return true;
+      }else{
+        this.setState({correo_error:'Correo no valido'}); 
+        return false;
+        
+      }
+ 
+      
+
+    }
 
     validar2(){
         var flag=true;
-        console.log("addd");
+        
         this.setState({rut_error:'', nombre_error:'',apellido_error:'',correo_error:'',contrasenia_error:'',localidad_error:''}); 
         
                    
@@ -96,6 +179,14 @@ class RegistroPage extends React.Component {
         if(this.state.localidad===''){
           flag=false;
           this.setState({localidad_error:'Campo requerido'}); 
+        }
+        if(this.validarCorreo()===false){
+          flag=false;
+          this.setState({correo_error:'Correo no valido'})
+        }
+        if(this.checkRut(this.state.rut)===false){
+          flag=false;
+          this.setState({rut_error:'Rut no valido'})
         }
         return flag;
     }
@@ -143,7 +234,7 @@ class RegistroPage extends React.Component {
             this.setState({rut_error:'Rut Existente'});
              
            }else{
-             
+         
              if(this.validar2()===true){
                 
                   this.registrar(); 
@@ -165,22 +256,15 @@ class RegistroPage extends React.Component {
   render() {
     const { classes } = this.props;
   return (
-    <div>
-      <MuiThemeProvider theme={theme} >
-        <AppBar color="transparent" position="static">
-        <Toolbar>
-          
-         
-          <Button onClick={() => this.props.SetLog(0)} color="inherit"> 
-            <Typography   variant="title" color="inherit" className={classes.flex}>
-                GrupoCold
-            </Typography>
-          </Button>
-          
-        </Toolbar>
-      </AppBar>
+    <div >
+      
+          <HeaderGps/>
+      
+      <br/><br/>
+      
+        <MuiThemeProvider theme={theme}>
       <GridContainer justify="center">
-        <GridItem xs={12} sm={12} md={7}>
+        <GridItem xs={12} sm={12} md={5}>
           <br/><br/><br/><br/>
           <Card > 
             <CardHeader className={classes.flex} color="primary" >   
@@ -188,12 +272,13 @@ class RegistroPage extends React.Component {
             </CardHeader>
             <br/>
             <GridContainer justify="center">
-              <GridItem xs={12} sm={4} md={4} >
+              <GridItem xs={12} sm={4} md={6} >
               <CustomInput
+                  
                   labelText="Nombre"
                   id="Nombre"
-                  success={this.state.nombre != ''? true  : false}
-                  error={this.state.nombre_error == ''? false : true}
+                  success={this.state.nombre_error === ''  && this.state.nombre!= ''? true  : false}
+                  error={this.state.nombre_error === ''? false : true}
                  
                   formControlProps={{
                     fullWidth: true
@@ -207,13 +292,15 @@ class RegistroPage extends React.Component {
                 />
                 
               </GridItem>
-              <GridItem xs={12} sm={4} md={4} >
+              </GridContainer>
+              <GridContainer justify="center">
+              <GridItem xs={12} sm={4} md={6} >
                 <CustomInput
                   labelText="Apellido"
                   id="Apellido"
-                  success={this.state.apellido != ''? true  : false}
+                  success={this.state.apellido_error == '' && this.state.apellido!= ''? true  : false}
                   error={this.state.apellido_error == ''? false : true}
-                 
+                  helperText={this.state.apellido_error}
                   formControlProps={{
                     fullWidth: true
                     
@@ -228,12 +315,12 @@ class RegistroPage extends React.Component {
               </GridContainer>
               <br/>
               <GridContainer justify="center">
-                <GridItem xs={12} sm={4} md={4}>
+                <GridItem xs={12} sm={4} md={6}>
                   <CustomInput
                     labelText="Rut"
                     id="Rut"
-                    success={this.state.rut != ''? true  : false}
-                    error={this.state.rut_error == ''? false : true}
+                    success={this.state.rut_error=== ''  && this.state.rut!= ''? true  : false}
+                    error={this.state.rut_error === ''? false : true}
                   
                     formControlProps={{
                       fullWidth: true
@@ -246,12 +333,13 @@ class RegistroPage extends React.Component {
                     }}
                   />
                 </GridItem>
-              
-              <GridItem xs={12} sm={4} md={4}>
+                </GridContainer>
+                <GridContainer justify="center">
+              <GridItem xs={12} sm={4} md={6}>
                   <CustomInput
                     labelText="Correo"
                     id="Correo"
-                    success={this.state.correo != ''? true  : false}
+                    success={this.state.correo != '' && this.state.correo!= ''? true  : false}
                     error={this.state.correo_error == ''? false : true}
                   
                     formControlProps={{
@@ -268,12 +356,12 @@ class RegistroPage extends React.Component {
               </GridContainer>
               <br/>
               <GridContainer justify="center">
-                <GridItem xs={12} sm={4} md={4}>
+                <GridItem xs={12} sm={4} md={6}>
                   <CustomInput
                     labelText="Contraseña"
                     id="Contraseña"
                     
-                    success={this.state.contrasenia != ''? true  : false}
+                    success={this.state.contrasenia_error == ''&& this.state.contrasenia != '' ? true  : false}
                     error={this.state.contrasenia_error == ''? false : true}
                   
                     formControlProps={{
@@ -287,11 +375,13 @@ class RegistroPage extends React.Component {
                     }}
                   />
                 </GridItem>
-                <GridItem xs={12} sm={4} md={4}>
+                </GridContainer>
+                <GridContainer justify="center">
+                <GridItem xs={12} sm={4} md={6} style={{marginTop:'2vh'}}>
                 
                 <InputLabel  htmlFor="age-helper">Ubicacion</InputLabel>
                   <Select
-                    fullWidth= "true"
+                    fullWidth= {true}
                     name="localidad"
                     value={this.state.localidad}
                     onChange={(e) =>this.handleChange(e)}
@@ -309,30 +399,40 @@ class RegistroPage extends React.Component {
                         <MenuItem value='Talcahuano'>Talcahuano</MenuItem>
                         <MenuItem value='Tome'>Tome</MenuItem>
                         <MenuItem value='Penco'>Penco</MenuItem>
-                  </Select>
-                </GridItem>
+                  </Select><br/><br/><br/><br/>
+                </GridItem> 
+                    
+                 
+              </GridContainer> 
+              <GridContainer justify="center">
+                   
+                  <Button style={{width: '40vh',height:'5vh'}} variant="contained" size="large" color="primary" onClick={()=>this.validar()} >REGISTRAR</Button>
+              
               </GridContainer>
-              <br/><br/>
-              <Button variant="contained" color="primary" onClick={()=>this.validar()} >REGISTRAR</Button>
+            
+              <br/>
+              <br/>
               
           </Card>
-          <SnackbarContent
+        
+            
+          
+        </GridItem >  
+       </GridContainer>
+        </ MuiThemeProvider>
+       <SnackbarContent
               message={
                   <span>
-                    <b>INFO ALERT:</b> Porfavor llene todos los campos
+                    <b>ALERTA DE INFORMACION:</b> Porfavor llene todos los campos
                   </span>
               }
               close={true}
-              color="info"
+              color="warning"
               icon={InfoOutline}
               />
-            
-          
-        </GridItem >
-       </GridContainer>
-      </MuiThemeProvider >
+    
      
-      <br/><br/> <br/><br/><br/><br/>
+      <br/><br/> <br/><br/>
       
       <Footer />
     </div>
