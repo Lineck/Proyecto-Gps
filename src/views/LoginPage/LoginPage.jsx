@@ -25,59 +25,50 @@ import image from "assets/img/bg7.jpg";
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
-    // we use this to make the card to appear after the page has been rendered
-    this.state = {
-          
+      this.state = {
           email:'',
           contraseña:'',
           cardAnimaton: "cardHidden",
-          error:1
-      
+          error:1      
     };
-    this.props.IniciarSesion();
-    
-    
+    this.props.IniciarSesion();    
     this.login=this.login.bind(this);
     this.onChange=this.onChange.bind(this);
   }
   
   login(){
-      
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange= ()=> {
 
-        if(xmlhttp.readyState === 4 && xmlhttp.status === 200){
-            var usuario = xmlhttp.responseText; 
-            console.log(usuario)
-     
-            if(usuario==1){
-            
-              this.props.SetLog(1);
-            
-            }else{
-              this.errorDidMount(usuario);
-            }         
-
+    // "../server/checklogin.php"
+    fetch("http://localhost/build/server/checklogin.php",{
+      method:"POST",
+      headers:{
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: "email="+this.state.email+"&contrasenia="+this.state.contraseña
+    })
+    .then((result)=>{
+      return result.text()
+    })
+    .then((mytext)=>{
+        if(mytext[0]==="4"){
+          this.props.SetLog(1);          
         }else{
-
+          if(mytext[0]==="1"){
+            this.props.SetLog(3);
+          }else{
+            this.errorDidMount(mytext[0]);
+          }
         }
-     }        
-      //  xmlhttp.open("POST","../server/checklogin.php",true);
-     xmlhttp.open("POST","http://localhost/build/server/checklogin.php",true);
-     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-     xmlhttp.send("email="+this.state.email+"&contrasenia="+this.state.contraseña);
-
+    })
     
   }
 
   onChange(e){
-
     this.setState({[e.target.name]: e.target.value})
-
   } 
+
   errorDidMount(usuario) {
    this.setState({error:usuario}) 
-   // we add a hidden class to the card and after 700 ms we delete it and the transition appears
     setTimeout(
       
       function() {
@@ -88,7 +79,6 @@ class LoginPage extends React.Component {
   }
 
   componentDidMount() {
-    // we add a hidden class to the card and after 700 ms we delete it and the transition appears
     setTimeout(
       function() {
         this.setState({ cardAnimaton: "" });
@@ -105,10 +95,10 @@ class LoginPage extends React.Component {
         <div
           className={classes.pageHeader}
           style={{
-            backgroundImage: "url(" + image + ")",
-            backgroundSize: "auto",
-            backgroundPosition: "top center"
-            // backgroundColor:'#999DFF'
+            // backgroundImage: "url(" + image + ")",
+            // backgroundSize: "auto",
+            // backgroundPosition: "top center"
+            backgroundColor:'#212139'
           }}
         >
           <div className={classes.container}>
@@ -203,28 +193,23 @@ class LoginPage extends React.Component {
                 </Card>
               </GridItem>
             </GridContainer>
-            { this.state.error == 3? <SnackbarContent
+            { this.state.error === "2"? <SnackbarContent
                                       message={
-                                          <span>
-                                            <b>INFO ALERT:</b>Contraseña incorrecta
-                                          </span>
+                                          <span><b>INFO ALERT:</b>Contraseña incorrecta</span>
                                       }
                                       close={true}
                                       color="danger"
                                       icon={InfoOutline}
                                     /> :
-          this.state.error == 3? <SnackbarContent
+          this.state.error === "3"? <SnackbarContent
                                     message={
-                                        <span>
-                                          <b>INFO ALERT:</b> Usuario incorrecto
-                                        </span>
+                                        <span><b>INFO ALERT:</b> Usuario incorrecto</span>
                                     }
                                     close={true}
                                     color="danger"
                                     icon={InfoOutline}
                                   /> :""}
           </div>
-          
           <Footer/>
         </div>
       </div>

@@ -11,16 +11,42 @@ import Footer from "components/Footer/Footer.jsx";
 
  class Validacion extends React.Component {
    constructor(props){
-
-    super(props);
+      super(props);
+      this.state = {          
+        token:'',
+        token_error:''          
+       };     
    }
 
-  render() {
+   validacion(){    
+    // ../server/token.php
+    fetch("http://localhost/build/server/token.php",{
+      method:"POST",
+      headers:{
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: "token="+this.state.token
+    }).then((result)=>{
+        return result.text()
+    }).then((mytext)=>{
+      if(mytext==="true"){
+        this.setState({token_error:''});
+        this.props.SetLog(3);
+      }else{
+        this.setState({token_error:"Token no coincide"})
+      }
+    })
     
+  }
+  handleChange(e) {
+    this.setState({[e.target.name]: e.target.value})
+  }
+
+  render() {    
     return (
       <div>
         
-        <HeaderGps/>
+        <HeaderGps SetLog={this.props.SetLog}/>
         <Dialog
           open={true}
           onClose={this.handleClose}
@@ -34,28 +60,30 @@ import Footer from "components/Footer/Footer.jsx";
             <TextField
               autoFocus
               margin="dense"
+              name="token"
               id="name"
               label="Codigo de verificacion"
               type="text"
               fullWidth
+              onChange={(e) => this.handleChange(e)}
+              error={this.state.token_error === ''? false : true}
+              helperText={this.state.token_error}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={()=>this.props.SetLog(0)} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={()=>this.validacion()} color="primary">
               Validar
             </Button>
           </DialogActions>
         </Dialog>
         <div style={{marginTop:'87vh'}}>
           <Footer />
-        </div>
-        
+        </div>        
       </div>
     )
   }
-
 }
   export default Validacion;

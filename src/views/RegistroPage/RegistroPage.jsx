@@ -20,7 +20,7 @@ import Footer from "components/Footer/Footer.jsx";
 import Card from "components/Card/Card.jsx"
 import CardHeader from "components/Card/CardHeader.jsx"
 import InputLabel from "@material-ui/core/InputLabel"
-import image from "assets/img/bg.jpg";
+
 
 const styles = {
   root: {
@@ -78,84 +78,59 @@ class RegistroPage extends React.Component {
           localidad_error:''
     
         }
-        this.validar2=this.validar2.bind(this);
-        
+        this.validar2=this.validar2.bind(this);        
     }
 
-     checkRut(rut) {
+    checkRut(rut) {
         // Despejar Puntos
         var valor = rut.replace('.','');
         // Despejar Guión
-        valor = valor.replace('-','');
-        
+        valor = valor.replace('-','');        
         // Aislar Cuerpo y Dígito Verificador
         var cuerpo = valor.slice(0,-1);
-        var dv = valor.slice(-1).toUpperCase();
-      
+        var dv = valor.slice(-1).toUpperCase();      
         // Formatear RUN
-        rut = cuerpo + '-'+ dv
-      
+        rut = cuerpo + '-'+ dv      
         // Si no cumple con el mínimo ej. (n.nnn.nnn)
-        if(cuerpo.length < 7) { this.setState({rut_error:"RUT Incompleto"}); return false;}
-      
+        if(cuerpo.length < 7) { this.setState({rut_error:"RUT Incompleto"}); return false;}      
       // Calcular Dígito Verificador
       var suma = 0;
-      var multiplo = 2;
-      
+      var multiplo = 2;      
       // Para cada dígito del Cuerpo
-      for(var i=1;i<=cuerpo.length;i++) {
-      
+      for(var i=1;i<=cuerpo.length;i++) {      
           // Obtener su Producto con el Múltiplo Correspondiente
-          var index = multiplo * valor.charAt(cuerpo.length - i);
-          
+          var index = multiplo * valor.charAt(cuerpo.length - i);          
           // Sumar al Contador General
-          suma = suma + index;
-          
+          suma = suma + index;          
           // Consolidar Múltiplo dentro del rango [2,7]
-          if(multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
-    
-      }
-      
+          if(multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }    
+      }      
       // Calcular Dígito Verificador en base al Módulo 11
-      var dvEsperado = 11 - (suma % 11);
-      
+      var dvEsperado = 11 - (suma % 11);      
       // Casos Especiales (0 y K)
       dv = (dv == 'K')?10:dv;
-      dv = (dv == 0)?11:dv;
-      
+      dv = (dv == 0)?11:dv;      
       // Validar que el Cuerpo coincide con su Dígito Verificador
-      if(dvEsperado != dv) {this.setState({rut_error:"RUT Invalido"}); return false; }
-      
+      if(dvEsperado != dv) {this.setState({rut_error:"RUT Invalido"}); return false; }      
       // Si todo sale bien, eliminar errores (decretar que es válido)
       return true;
-  }
+    }
 
-    
     validarCorreo(){
-
-      var array=this.state.correo;
-     
+      var array=this.state.correo;     
       var res = array.split('@');
       if(res[1]==="alumnos.ubiobio.cl"){
         return true;
       }else{
         this.setState({correo_error:'Correo no valido'}); 
-        return false;
-        
+        return false;        
       }
- 
-      
-
     }
 
     validar2(){
-        var flag=true;
-        
+        var flag=true;        
         this.setState({rut_error:'', nombre_error:'',apellido_error:'',correo_error:'',contrasenia_error:'',localidad_error:''}); 
         
-                   
-    
-    
         if(this.state.rut===''){
           flag=false;
           this.setState({rut_error:'Campo requerido'}); 
@@ -192,74 +167,52 @@ class RegistroPage extends React.Component {
     }
 
     handleChange(e) {
-        this.setState({[e.target.name]: e.target.value})
+      this.setState({[e.target.name]: e.target.value})
     }
 
     registrar(){
-
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange= ()=> {
-
-           if(xmlhttp.readyState === 4 && xmlhttp.status === 200){
-
-               var usuario = xmlhttp.responseText; 
-              if(usuario=="true"){
-                console.log("exito");
-              }
-            
-           }
-        }        
-           // xmlhttp.open("POST","../server/registro.php",true);
-        xmlhttp.open("POST","http://localhost/build/server/registro.php",true);
-         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send("rut="+this.state.rut+"&nombre="+this.state.nombre+"&apellido="+this.state.apellido+"&email="+this.state.correo+"&contrasenia="+this.state.contrasenia+"&localidad="+this.state.localidad);
-
-     
-      
-       
-
+     //  "../server/registro.php"
+      fetch("http://localhost/build/server/registro.php",{
+        method:"POST",
+        headers:{
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "rut="+this.state.rut+"&nombre="+this.state.nombre+"&apellido="+this.state.apellido+"&email="+this.state.correo+"&contrasenia="+this.state.contrasenia+"&localidad="+this.state.localidad
+      })
+      .then(()=>{
+        this.props.SetLog(1); 
+      })
     }
 
     validar(){
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange= ()=> {
-
-        if(xmlhttp.readyState === 4 && xmlhttp.status === 200){
-
-            var usuario = xmlhttp.responseText; 
-            console.log(usuario);
-            
-           if(usuario==="false" ){
-             
-            this.setState({rut_error:'Rut Existente'});
-             
-           }else{
-         
-             if(this.validar2()===true){
-                
-                  this.registrar(); 
-              }else{
-                 
-              }
-           }
+    // ../server/checkrut.php
+    fetch("http://localhost/build/server/checkrut.php",{
+        method:"POST",
+        headers:{
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "rut="+this.state.rut
+      })
+      .then((result)=>{
+        return result.text();        
+      })
+      .then((text)=>{
+        if(text==="false"){          
+          this.setState({rut_error:'Rut Existente'});
+        }else{       
+          if(this.validar2()===true){                    
+            this.registrar(); 
+          }
         }
-     }       
-        // xmlhttp.open("POST","../server/checkrut.php",true);
-     xmlhttp.open("POST","http://localhost/build/server/checkrut.php",true);
-      xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-     xmlhttp.send("rut="+this.state.rut);
-
-  
+      })     
     }
 
 
   render() {
     const { classes } = this.props;
   return (
-    <div >
-      
-          <HeaderGps/>
-      
+    <div >      
+          <HeaderGps SetLog={this.props.SetLog}/>      
       <br/><br/>
       
         <MuiThemeProvider theme={theme}>
@@ -272,12 +225,12 @@ class RegistroPage extends React.Component {
             </CardHeader>
             <br/>
             <GridContainer justify="center">
-              <GridItem xs={12} sm={4} md={6} >
+              <GridItem xs={12} sm={4} md={7} >
               <CustomInput
                   
                   labelText="Nombre"
                   id="Nombre"
-                  success={this.state.nombre_error === ''  && this.state.nombre!= ''? true  : false}
+                  success={this.state.nombre_error === ''  && this.state.nombre!== ''? true  : false}
                   error={this.state.nombre_error === ''? false : true}
                  
                   formControlProps={{
@@ -293,13 +246,14 @@ class RegistroPage extends React.Component {
                 
               </GridItem>
               </GridContainer>
+              <br/>
               <GridContainer justify="center">
-              <GridItem xs={12} sm={4} md={6} >
+              <GridItem xs={12} sm={4} md={7} >
                 <CustomInput
                   labelText="Apellido"
                   id="Apellido"
-                  success={this.state.apellido_error == '' && this.state.apellido!= ''? true  : false}
-                  error={this.state.apellido_error == ''? false : true}
+                  success={this.state.apellido_error === '' && this.state.apellido!== ''? true  : false}
+                  error={this.state.apellido_error === ''? false : true}
                   helperText={this.state.apellido_error}
                   formControlProps={{
                     fullWidth: true
@@ -315,11 +269,11 @@ class RegistroPage extends React.Component {
               </GridContainer>
               <br/>
               <GridContainer justify="center">
-                <GridItem xs={12} sm={4} md={6}>
+                <GridItem xs={12} sm={4} md={7}>
                   <CustomInput
                     labelText="Rut"
                     id="Rut"
-                    success={this.state.rut_error=== ''  && this.state.rut!= ''? true  : false}
+                    success={this.state.rut_error=== ''  && this.state.rut!== ''? true  : false}
                     error={this.state.rut_error === ''? false : true}
                   
                     formControlProps={{
@@ -334,13 +288,14 @@ class RegistroPage extends React.Component {
                   />
                 </GridItem>
                 </GridContainer>
+                <br/>
                 <GridContainer justify="center">
-              <GridItem xs={12} sm={4} md={6}>
+              <GridItem xs={12} sm={4} md={7}>
                   <CustomInput
                     labelText="Correo"
                     id="Correo"
-                    success={this.state.correo != '' && this.state.correo!= ''? true  : false}
-                    error={this.state.correo_error == ''? false : true}
+                    success={this.state.correo !== '' && this.state.correo!== ''? true  : false}
+                    error={this.state.correo_error === ''? false : true}
                   
                     formControlProps={{
                       fullWidth: true
@@ -356,13 +311,13 @@ class RegistroPage extends React.Component {
               </GridContainer>
               <br/>
               <GridContainer justify="center">
-                <GridItem xs={12} sm={4} md={6}>
+                <GridItem xs={12} sm={4} md={7}>
                   <CustomInput
                     labelText="Contraseña"
                     id="Contraseña"
                     
-                    success={this.state.contrasenia_error == ''&& this.state.contrasenia != '' ? true  : false}
-                    error={this.state.contrasenia_error == ''? false : true}
+                    success={this.state.contrasenia_error === ''&& this.state.contrasenia !== '' ? true  : false}
+                    error={this.state.contrasenia_error === ''? false : true}
                   
                     formControlProps={{
                       fullWidth: true
@@ -376,8 +331,9 @@ class RegistroPage extends React.Component {
                   />
                 </GridItem>
                 </GridContainer>
+                <br/>
                 <GridContainer justify="center">
-                <GridItem xs={12} sm={4} md={6} style={{marginTop:'2vh'}}>
+                <GridItem xs={12} sm={4} md={7} style={{marginTop:'2vh'}}>
                 
                 <InputLabel  htmlFor="age-helper">Ubicacion</InputLabel>
                   <Select
@@ -413,9 +369,7 @@ class RegistroPage extends React.Component {
               <br/>
               <br/>
               
-          </Card>
-        
-            
+          </Card>  
           
         </GridItem >  
        </GridContainer>
