@@ -38,7 +38,7 @@ class LoginPage extends React.Component {
   
   login(){
 
-    // "../server/checklogin.php"
+    // fetch("../server/checklogin.php",{
     fetch("http://localhost/build/server/checklogin.php",{
       method:"POST",
       headers:{

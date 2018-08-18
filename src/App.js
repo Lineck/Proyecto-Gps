@@ -30,6 +30,7 @@ class App extends Component {
 
 
     fetch("http://localhost/build/server/closeSession.php")
+    // fetch("../server/closeSession.php")
     .then(()=>{
         this.setState({
           rut:"",
@@ -40,11 +41,13 @@ class App extends Component {
   IniciarSesion(){
 
     fetch("http://localhost/build/server/initSession.php")
+    // fetch("../server/initSession.php")
     .then((response) =>{
       return response.json()
     }).then((myjson)=>this.setState({
                                     nombre: myjson["nombre"],
-                                    rut:myjson["rut"] 
+                                    rut:myjson["rut"],
+                                    credentials: 'include'
                                     })
             )
   }

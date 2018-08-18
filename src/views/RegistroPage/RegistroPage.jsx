@@ -171,8 +171,9 @@ class RegistroPage extends React.Component {
     }
 
     registrar(){
-     //  "../server/registro.php"
+ 
       fetch("http://localhost/build/server/registro.php",{
+        // fetch("../server/registro.php",{
         method:"POST",
         headers:{
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -185,8 +186,9 @@ class RegistroPage extends React.Component {
     }
 
     validar(){
-    // ../server/checkrut.php
+ 
     fetch("http://localhost/build/server/checkrut.php",{
+      // fetch("../server/checkrut.php",{
         method:"POST",
         headers:{
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -384,8 +386,7 @@ class RegistroPage extends React.Component {
               color="warning"
               icon={InfoOutline}
               />
-    
-     
+        
       <br/><br/> <br/><br/>
       
       <Footer />
