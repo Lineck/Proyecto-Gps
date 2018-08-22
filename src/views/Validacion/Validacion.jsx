@@ -19,8 +19,8 @@ import Footer from "components/Footer/Footer.jsx";
    }
 
    validacion(){    
-    fetch("http://localhost/build/server/token.php",{
-    // fetch("../server/token.php",{
+    // fetch("http://localhost/build/server/token.php",{
+    fetch("../server/token.php",{
       method:"POST",
       headers:{
         'Content-Type': 'application/x-www-form-urlencoded'

@@ -2,6 +2,7 @@
   "name": "material-kit-react",
   "version": "1.1.0",
   "private": true,
+  "homepage":"http://146.83.198.35/~grupocold/Parte_Diego/build",
   "dependencies": {
     "@material-ui/core": "1.2.1",
     "@material-ui/icons": "1.1.0",

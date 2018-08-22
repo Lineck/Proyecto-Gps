@@ -28,25 +28,25 @@ function Footer({ ...props }) {
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
               <a
-                href="https://www.creative-tim.com/"
+                href="#"
                 className={classes.block}
                 target="_blank"
               >
-                Creative Tim
+                GrupoCold
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a
-                href="https://www.creative-tim.com/presentation"
+                href="#"
                 className={classes.block}
                 target="_blank"
               >
-                About us
+                Acerca de Nosotros
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a
-                href="http://blog.creative-tim.com/"
+                href="#"
                 className={classes.block}
                 target="_blank"
               >
@@ -55,11 +55,11 @@ function Footer({ ...props }) {
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a
-                href="https://www.creative-tim.com/license"
+                href="#"
                 className={classes.block}
                 target="_blank"
               >
-                Licenses
+                Licencia
               </a>
             </ListItem>
           </List>
